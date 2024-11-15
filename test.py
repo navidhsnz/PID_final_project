@@ -186,12 +186,12 @@ def update(dt):
 
 
 
-    if key_handler[key.RETURN]:
+    if key_handler[key.Z]:
 
         im = Image.fromarray(obs)
 
         im.save("example.png")
-
+        print("image saved !")
     # if done:
     #     print("done!")
     #     env.reset()
