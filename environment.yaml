@@ -1,0 +1,15 @@
+name: gym-duckietown
+channels:
+    - pytorch
+    - defaults
+dependencies:
+    - python=3.8
+    - torchvision
+    - pyzmq
+    - numpy
+    - pyyaml
+    - pip:
+        - gym
+        - pyglet
+        - opencv-python
+        - scikit-image
