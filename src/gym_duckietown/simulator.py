@@ -179,6 +179,7 @@ MAX_SPAWN_ATTEMPTS = 5000
 LanePosition0 = namedtuple("LanePosition", "dist dot_dir angle_deg angle_rad")
 
 
+
 class LanePosition(LanePosition0):
     def as_json_dict(self):
         """Serialization-friendly format."""
@@ -1704,13 +1705,12 @@ class Simulator(gym.Env):
         try:
             lp = self.get_lane_pos2(pos, angle)
         except NotInLane:
-            dist = np.inf
+            dist = None
         else:
-            pass
             # Compute the reward
             dist = lp.dist
 
-        return dist * 100
+        return dist
 
 
     def _compute_done_reward(self) -> DoneRewardInfo:
