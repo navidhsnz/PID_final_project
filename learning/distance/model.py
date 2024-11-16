@@ -3,59 +3,84 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from PIL import Image
+import torch.optim as optim
+from torchvision import transforms
+from torch.utils.data import DataLoader, TensorDataset
+import cv2
 
-#VERY basic model
-class CNNModel(nn.Module):
-    def __init__(self):
-        super(CNNModel, self).__init__()
+class LaneDetectionCNN(nn.Module):
+    def __init__(self, input_shape):
+        super(LaneDetectionCNN, self).__init__()
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=5, stride=2, padding=2)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2, padding=2)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1)
+        self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
 
-        # ONLY TRU IN CASE OF DUCKIETOWN:
-        flat_size = 32 * 9 * 14
-
-        self.conv1 = nn.Conv2d(3, 32, 8, stride=2)
-        self.act1 = nn.ReLU()
-        self.conv2 = nn.Conv2d(32, 32, 4, stride=2)
-        self.act2 = nn.ReLU()
-        self.conv3 = nn.Conv2d(32, 32, 4, stride=2)
-        self.act3 = nn.ReLU()
-        self.conv4 = nn.Conv2d(32, 32, 4, stride=1)
-        self.act3 = nn.ReLU()
-        self.lin1 = nn.Linear(flat_size, 512)
-        self.act_output = nn.Sigmoid()
-        
-        self.bn = nn.BatchNorm2d(32)
         self.dropout = nn.Dropout(0.5)
-        
 
-    def forward(self, x):
-        x = self.act1(self.conv1(x))
-        x = self.act2(self.conv2(x))
-        x = self.act3(self.conv3(x))
-        x = self.act4(self.conv4(x))
-        x = self.act_output(self.lin1(x))        
+        # Calculate flat size dynamically
+        self._to_linear = None
+        self._calculate_flat_size(input_shape)
+
+        self.fc1 = nn.Linear(self._to_linear, 128)
+        self.fc2 = nn.Linear(128, 1)  # Single output neuron for regression
+
+    def _calculate_flat_size(self, input_shape):
+        x = torch.zeros(1, *input_shape)
+        x = self._forward_conv(x)
+        self._to_linear = x.numel()
+
+    def _forward_conv(self, x):
+        x = torch.relu(self.conv1(x))
+        x = torch.relu(self.conv2(x))
+        x = torch.relu(self.conv3(x))
+        x = torch.relu(self.conv4(x))
         return x
 
+    def forward(self, x):
+        x = self._forward_conv(x)
+        x = x.view(x.size(0), -1) 
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
-# Very basic train not tested
-def train(model):
-    loss_fn = nn.BCELoss()  # binary cross entropy
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-    n_epochs = 100
-    batch_size = 10
+# Training function
+def train_model(model, dataloader, criterion, optimizer, n_epochs=10):
+    model.train()
     for epoch in range(n_epochs):
-        for i in range(0, len(X), batch_size):
-            Xbatch = X[i:i+batch_size]
-            y_pred = model(Xbatch)
-            ybatch = y[i:i+batch_size]
-            loss = loss_fn(y_pred, ybatch)
+        total_loss = 0
+        for Xbatch, ybatch in dataloader:
             optimizer.zero_grad()
+            y_pred = model(Xbatch)
+            loss = criterion(y_pred, ybatch)
             loss.backward()
             optimizer.step()
-        print(f'Finished epoch {epoch}, latest loss {loss}')
+            total_loss += loss.item()
+        print(f"Epoch {epoch+1}/{n_epochs}, Loss: {total_loss/len(dataloader):.4f}")
+
 
 if __name__ == "__main__":
-    print("elo")
-    dist = -0.0033901180039446403
-    im = Image.open("example.png")
-    model = CNNModel()
-    print(model)
+    # Dummy training data
+    transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize((120, 160)),
+        transforms.ToTensor()
+    ])
+
+    # Simulated dataset (replace with real data)
+    X_dummy = torch.rand(10, 3, 120, 160)  # 10 RGB images
+    y_dummy = torch.rand(10, 1) * 40 - 20  # Random values between -20 and 20
+
+    dataset = TensorDataset(X_dummy, y_dummy)
+    dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
+
+    input_shape = (3, 120, 160)  # Input image size (3 channels, height, width)
+    model = LaneDetectionCNN(input_shape)
+
+    criterion = nn.MSELoss()  # Mean Squared Error Loss for regression
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    # Train the model
+    train_model(model, dataloader, criterion, optimizer, n_epochs=5)
+
+    
