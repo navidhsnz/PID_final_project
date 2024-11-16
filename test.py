@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#
+#  
 
 """
 This script allows you to manually control the simulator or Duckiebot
