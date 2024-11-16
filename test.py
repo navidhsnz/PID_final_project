@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# manual
+#
 
 """
 This script allows you to manually control the simulator or Duckiebot
@@ -10,7 +10,6 @@ import argparse
 import sys
 # import wx
 from tkinter import Tk, Canvas
-import logging
 import gym
 import numpy as np
 import pyglet
