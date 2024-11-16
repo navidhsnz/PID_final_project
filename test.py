@@ -10,7 +10,7 @@ import argparse
 import sys
 # import wx
 from tkinter import Tk, Canvas
-
+import logging
 import gym
 import numpy as np
 import pyglet
@@ -55,6 +55,17 @@ else:
 env.reset()
 env.render()
 
+def write_pid_to_file():
+    """
+    Writes the current PID parameters to a file.
+    Overwrites the file each time the parameters change.
+    """
+    with open("pid_parameters.txt", "w") as f:
+        f.write(f"kp: {pid.kp}\n")
+        f.write(f"ki: {pid.ki}\n")
+        f.write(f"kd: {pid.kd}\n")
+
+
 
 @env.unwrapped.window.event
 def on_key_press(symbol, modifiers):
@@ -72,6 +83,26 @@ def on_key_press(symbol, modifiers):
     elif symbol == key.ESCAPE:
         env.close()
         sys.exit(0)
+
+    # Adjust PID parameters
+    elif symbol == key.O:  # Increase kp
+        pid.kp += 10
+        write_pid_to_file()
+    elif symbol == key.P:  # Decrease kp
+        pid.kp = max(0, pid.kp - 10)
+        write_pid_to_file()
+    elif symbol == key.K:  # Increase kd
+        pid.kd += 10
+        write_pid_to_file()
+    elif symbol == key.L:  # Decrease kd
+        pid.kd = max(0, pid.kd - 10)
+        write_pid_to_file()
+
+    elif symbol == key.PAGEUP:
+        env.unwrapped.cam_angle[0] = 0
+
+
+
 
 
 
@@ -148,9 +179,10 @@ def update(dt):
         error = -dist
         pid_output = pid.compute(error, dt)
         turn = pid_output
-        last_action[1] = -np.clip(pid_output, -1.0, 1.0)
+        last_action[1] = -pid_output # np.clip(pid_output, -1.0, 1.0)
     else:
         turn = None
+
     print(f"dist = {dist}, dt = {dt}, pid_output {turn}")
 
 
