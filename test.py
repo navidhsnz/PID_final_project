@@ -17,15 +17,37 @@ from pyglet.window import key
 from tkinter import Tk, Canvas
 import cv2
 import time
+import os
 from PIL import Image, ImageTk
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.autograd import Variable
+from PIL import Image
+import os
+import torch.optim as optim
+from torchvision import transforms
+from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import Dataset, DataLoader
+import numpy as np
+import cv2
 
 from gym_duckietown.envs import DuckietownEnv
 
 # from experiments.utils import save_img
 
+# Global counter for image and text file IDs
+step_counter = 0
+image_id = 0
+capturing_images = False
+IMAGE_FOLDER = "road_images/trail1/images"
+TEXT_FOLDER = "road_images/trail1/labels"
+os.makedirs(IMAGE_FOLDER, exist_ok=True)
+os.makedirs(TEXT_FOLDER, exist_ok=True)
+
 parser = argparse.ArgumentParser()
-parser.add_argument("--env-name", default="Duckietown-zigzag_dists-v0")
-parser.add_argument("--map-name", default="zigzag_dists")
+parser.add_argument("--env-name", default="Duckietown-small_loop-v0")
+parser.add_argument("--map-name", default="small_loop")
 parser.add_argument("--distortion", default=False, action="store_true")
 parser.add_argument("--camera_rand", default=False, action="store_true")
 parser.add_argument("--draw-curve", action="store_true", help="draw the lane following curve")
@@ -54,15 +76,85 @@ else:
 env.reset()
 env.render()
 
-def write_pid_to_file():
-    """
-    Writes the current PID parameters to a file.
-    Overwrites the file each time the parameters change.
-    """
-    with open("pid_parameters.txt", "w") as f:
-        f.write(f"kp: {pid.kp}\n")
-        f.write(f"ki: {pid.ki}\n")
-        f.write(f"kd: {pid.kd}\n")
+class LaneDetectionCNN(nn.Module):
+    def __init__(self, input_shape):
+        super(LaneDetectionCNN, self).__init__()
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=5, stride=2, padding=2)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2, padding=2)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1)
+        self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
+
+        self.dropout = nn.Dropout(0.5)
+
+        # Calculate flat size dynamically
+        self._to_linear = None
+        self._calculate_flat_size(input_shape)
+
+        self.fc1 = nn.Linear(self._to_linear, 128)
+        self.fc2 = nn.Linear(128, 1)  # Single output neuron for regression
+
+    def _calculate_flat_size(self, input_shape):
+        x = torch.zeros(1, *input_shape)
+        x = self._forward_conv(x)
+        self._to_linear = x.numel()
+
+    def _forward_conv(self, x):
+        x = torch.relu(self.conv1(x))
+        x = torch.relu(self.conv2(x))
+        x = torch.relu(self.conv3(x))
+        x = torch.relu(self.conv4(x))
+        return x
+
+    def forward(self, x):
+        x = self._forward_conv(x)
+        x = x.view(x.size(0), -1) 
+        x = torch.relu(self.fc1(x))
+        x = torch.tanh(self.fc2(x))
+        return x
+
+# Training function
+def train_model(model, dataloader, criterion, optimizer, n_epochs=10):
+    model.train()
+    for epoch in range(n_epochs):
+        total_loss = 0
+        for Xbatch, ybatch in dataloader:
+            # Move inputs and labels to device
+            Xbatch, ybatch = Xbatch.to(device), ybatch.to(device)
+
+            optimizer.zero_grad()
+            y_pred = model(Xbatch)
+            loss = criterion(y_pred, ybatch)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+
+        print(f"Epoch {epoch+1}/{n_epochs}, Loss: {total_loss/len(dataloader):.4f}")
+        
+    return model
+
+
+
+def toggle_capturing():
+    global capturing_images
+    capturing_images = not capturing_images
+    if capturing_images:
+        print("Started capturing images and distances.")
+    else:
+        print("Stopped capturing images and distances.")
+    time.sleep(1)
+
+
+
+def save_image_and_distance(obs, distance, image_id):
+    # Save the image
+    im = Image.fromarray(obs)
+    image_path = os.path.join(IMAGE_FOLDER, f"{image_id}.png")
+    im.save(image_path)
+
+    # Save the corresponding distance
+    text_path = os.path.join(TEXT_FOLDER, f"{image_id}.txt")
+    with open(text_path, "w") as f:
+        f.write(str(distance))
 
 
 
@@ -82,6 +174,8 @@ def on_key_press(symbol, modifiers):
     elif symbol == key.ESCAPE:
         env.close()
         sys.exit(0)
+    elif symbol == key.S:
+        toggle_capturing()
 
     # Adjust PID parameters
     elif symbol == key.O:  # Increase kp
@@ -135,13 +229,11 @@ class PIDController:
 
 
 def update(dt):
-    """
-    This function is called at every frame to handle
-    movement/stepping and redrawing
-    """
     global old_dist
+    global model, device
     wheel_distance = 0.102
     min_rad = 0.08
+    global old_dist, step_counter, image_id, capturing_images
 
     action = np.array([0.0, 0.0])
     
@@ -167,23 +259,49 @@ def update(dt):
     
     obs, dist = env.go(action)
 
-    print(old_dist)
     if dist == None:
         dist = old_dist
     else:
         # dist *= 100
         old_dist = dist
 
+    im = np.array(Image.fromarray(obs))
+
+    image_tensor = torch.from_numpy(np.transpose(im, (2, 0, 1))).float() / 255.0
+
+    image_tensor = image_tensor.unsqueeze(0)
+
+    with torch.no_grad():
+        prediction = model(image_tensor)  # Predict the distance
+
+    predicted_distance = prediction.item()
+    
+    # print("shape: ",image_tensor.shape)
+    
+    # # Add batch dimension for model input (B, C, H, W)
+    # image_tensor = image_tensor.unsqueeze(0).to(device)
+
+    # # Model prediction
+    # with torch.no_grad():
+    #     prediction = model(image_tensor)
+
+    # Print prediction
+    # print(f"Prediction: {prediction.item()}")
+
+    #  step: {env.unwrapped.step_count},
+    # if capturing_images:
+    #     if env.unwrapped.step_count % 10 == 0:
+    #         save_image_and_distance(obs, dist, image_id)
+    #         image_id += 1
+
+
     if key_handler[key.SPACE]:  
-        error = -dist
+        error = -predicted_distance # -dist
         pid_output = pid.compute(error, dt)
         turn = pid_output
         last_action[1] = -pid_output # np.clip(pid_output, -1.0, 1.0)
     else:
         turn = None
-
-    print(f"dist = {dist}, dt = {dt}, pid_output {turn}")
-
 
 
     if key_handler[key.Z]:
@@ -192,6 +310,10 @@ def update(dt):
 
         im.save("example.png")
         print("image saved !")
+
+
+    print(f"dist_real = {dist}, dt = {dt}, pid_output {turn}")
+    print(f"pred_real = {predicted_distance}")
     # if done:
     #     print("done!")
     #     env.reset()
@@ -205,14 +327,23 @@ def update(dt):
 # canvas = Canvas(root, width=900, height=900)  # Adjust the size to your image dimensions
 # canvas.pack()
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
 # pid
-pid = PIDController(kp=50, ki=0, kd=50)
+pid = PIDController(kp=50, ki=0.3, kd=50)
 
 # last action
 last_action = np.array([0.1, 0.0])
 
 ##
 old_dist = 0
+model = LaneDetectionCNN((3, 480, 640))
+
+# Load the model weights
+model.load_state_dict(torch.load("lane_detection_model.pth"))
+model.eval()  # Set to evaluation mode
+print("Model weights loaded from 'lane_detection_model.pth'")
 
 pyglet.clock.schedule_interval(update, 1.0 / env.unwrapped.frame_rate)
 
