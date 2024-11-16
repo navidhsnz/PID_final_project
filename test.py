@@ -270,7 +270,7 @@ def update(dt):
     image_tensor = torch.from_numpy(np.transpose(im, (2, 0, 1))).float() / 255.0
 
     image_tensor = image_tensor.unsqueeze(0)
-
+ 
     with torch.no_grad():
         prediction = model(image_tensor)  # Predict the distance
 
