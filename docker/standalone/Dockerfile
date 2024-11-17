@@ -1,5 +1,8 @@
 #FROM pytorch/pytorch
 FROM nvidia/opengl:1.2-glvnd-devel
+
+ENV PATH="/root/miniconda3/bin:${PATH}"
+
 RUN apt-get update -y && apt-get install -y  \
     freeglut3-dev \
     python3-pip \
@@ -9,12 +12,20 @@ RUN apt-get update -y && apt-get install -y  \
     && \
     rm -rf /var/lib/apt/lists/*
 
+#Installing ocnda 
+RUN arch=$(uname -m) && \
+    wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" -O miniconda.sh && \
+    mkdir -p /root/.conda && \
+    bash miniconda.sh -b -p /root/miniconda3 && \
+    rm -f miniconda.sh
 
 WORKDIR /gym-duckietown
 
 COPY . .
 
-#RUN pip install -v -e .
+RUN conda env create -f environment.yaml
+RUN conda activate gym-duckietown
 
-RUN python3 -m pip install pyglet==1.5.15
-RUN python3 -c "from gym_duckietown import *"
+RUN pip install -e .
+RUN pip install numpy==1.21
+RUN pip install pyglet==1.5.15
