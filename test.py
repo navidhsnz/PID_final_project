@@ -37,13 +37,16 @@ from gym_duckietown.envs import DuckietownEnv
 # from experiments.utils import save_img
 
 # Global counter for image and text file IDs
+pid_enabled = False
 step_counter = 0
 image_id = 0
 capturing_images = False
-IMAGE_FOLDER = "road_images/trail1/images"
-TEXT_FOLDER = "road_images/trail1/labels"
+IMAGE_FOLDER = "training_images/trail4/images"
+DISTANCE_FOLDER = "training_images/trail4/labels"
+ACTION_FOLDER = "training_images/trail4/actions"
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
-os.makedirs(TEXT_FOLDER, exist_ok=True)
+os.makedirs(DISTANCE_FOLDER, exist_ok=True)
+os.makedirs(ACTION_FOLDER, exist_ok=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--env-name", default="Duckietown-small_loop-v0")
@@ -145,16 +148,21 @@ def toggle_capturing():
 
 
 
-def save_image_and_distance(obs, distance, image_id):
+def save_image_distance_action(obs, distance, action_taken, image_id):
     # Save the image
     im = Image.fromarray(obs)
     image_path = os.path.join(IMAGE_FOLDER, f"{image_id}.png")
     im.save(image_path)
 
-    # Save the corresponding distance
-    text_path = os.path.join(TEXT_FOLDER, f"{image_id}.txt")
-    with open(text_path, "w") as f:
+    # Save the distance in a text file
+    distance_path = os.path.join(DISTANCE_FOLDER, f"{image_id}.txt")
+    with open(distance_path, "w") as f:
         f.write(str(distance))
+
+    # Save the action in a separate text file
+    action_path = os.path.join(ACTION_FOLDER, f"{image_id}.txt")
+    with open(action_path, "w") as f:
+        f.write(f"{action_taken[0]} {action_taken[1]}")
 
 
 
@@ -164,7 +172,7 @@ def on_key_press(symbol, modifiers):
     This handler processes keyboard commands that
     control the simulation
     """
-
+    global pid_enabled
     if symbol == key.BACKSPACE or symbol == key.SLASH:
         print("RESET")
         env.reset()
@@ -180,19 +188,30 @@ def on_key_press(symbol, modifiers):
     # Adjust PID parameters
     elif symbol == key.O:  # Increase kp
         pid.kp += 10
-        write_pid_to_file()
+        # write_pid_to_file()
     elif symbol == key.P:  # Decrease kp
         pid.kp = max(0, pid.kp - 10)
-        write_pid_to_file()
+        # write_pid_to_file()
     elif symbol == key.K:  # Increase kd
         pid.kd += 10
-        write_pid_to_file()
+        # write_pid_to_file()
     elif symbol == key.L:  # Decrease kd
         pid.kd = max(0, pid.kd - 10)
-        write_pid_to_file()
+        # write_pid_to_file()
 
     elif symbol == key.PAGEUP:
         env.unwrapped.cam_angle[0] = 0
+
+    elif key_handler[key.SPACE]:
+        pid_enabled = not pid_enabled
+        print("pid engaged!" if pid_enabled else "pid disabled.")
+
+    # increase/decrease speed on pid mode
+    elif symbol == key.N:  # Decrease kd
+        last_action[0] +=0.05
+    elif symbol == key.B:  # Decrease kd
+        last_action[0] -=0.05
+
 
 
 
@@ -229,6 +248,7 @@ class PIDController:
 
 
 def update(dt):
+    global pid_enabled
     global old_dist
     global model, device
     wheel_distance = 0.102
@@ -236,17 +256,18 @@ def update(dt):
     global old_dist, step_counter, image_id, capturing_images
 
     action = np.array([0.0, 0.0])
-    
 
     if key_handler[key.UP]:
-        action += np.array([1, 0.0])
+        action += np.array([0.5, 0.0])
     if key_handler[key.DOWN]:
         action -= np.array([1, 0])
     if key_handler[key.LEFT]:
         action += np.array([0, 2])
     if key_handler[key.RIGHT]:
         action -= np.array([0, 2])
-    if key_handler[key.SPACE]:
+    
+    
+    if pid_enabled:
         action = last_action #np.array([0, 0])
 
 
@@ -276,27 +297,17 @@ def update(dt):
 
     predicted_distance = prediction.item()
     
-    # print("shape: ",image_tensor.shape)
     
-    # # Add batch dimension for model input (B, C, H, W)
-    # image_tensor = image_tensor.unsqueeze(0).to(device)
-
-    # # Model prediction
-    # with torch.no_grad():
-    #     prediction = model(image_tensor)
-
-    # Print prediction
-    # print(f"Prediction: {prediction.item()}")
 
     #  step: {env.unwrapped.step_count},
-    # if capturing_images:
-    #     if env.unwrapped.step_count % 10 == 0:
-    #         save_image_and_distance(obs, dist, image_id)
-    #         image_id += 1
+    if capturing_images:
+        if env.unwrapped.step_count % 27 == 0:
+            save_image_distance_action(obs, dist, action, image_id)
+            image_id += 1
 
 
-    if key_handler[key.SPACE]:  
-        error = -predicted_distance # -dist
+    if pid_enabled:  
+        error = -dist  #  predicted_distance # 
         pid_output = pid.compute(error, dt)
         turn = pid_output
         last_action[1] = -pid_output # np.clip(pid_output, -1.0, 1.0)
@@ -331,7 +342,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 # pid
-pid = PIDController(kp=50, ki=0.3, kd=50)
+pid = PIDController(kp=50, ki=0, kd=50)
 
 # last action
 last_action = np.array([0.1, 0.0])
