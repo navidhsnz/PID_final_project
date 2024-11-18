@@ -24,8 +24,15 @@ WORKDIR /gym-duckietown
 COPY . .
 
 RUN conda env create -f environment.yaml
+RUN conda init
+RUN . /root/.bashrc
 RUN conda activate gym-duckietown
 
+RUN apt update
+
 RUN pip install -e .
-RUN pip install numpy==1.21
+RUN pip install numpy==1.22
 RUN pip install pyglet==1.5.15
+RUN pip install Pillow
+RUN apt install xvfb
+RUN conda install -c conda-forge libstdcxx-ng 
