@@ -8,6 +8,7 @@ from torchvision import transforms
 from PIL import Image
 import os
 import random
+import cv2
 from tqdm import tqdm
 import numpy as np
 
@@ -91,6 +92,64 @@ from PIL import Image
 import os
 import random
 from torch.utils.data import DataLoader, random_split
+
+def apply_preprocessing(image):
+    """
+    Apply preprocessing transformations to the input image.
+
+    Parameters:
+    - image: PIL Image object.
+    """
+    image_array = np.array(image)
+    channels = [image_array[:, :, i] for i in range(image_array.shape[2])]
+    h, w, _ = image_array.shape
+    
+    imghsv = cv2.cvtColor(image_array, cv2.COLOR_RGB2HSV)
+    img = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
+
+    mask_ground = np.ones(img.shape, dtype=np.uint8)  # Start with a mask of ones (white)
+
+
+    one_third_height = h // 3
+    mask_ground[:one_third_height, :] = 0  # Mask the top 1/3 of the image
+    
+    #gaussian filter
+    sigma = 4.5
+    img_gaussian_filter = cv2.GaussianBlur(img,(0,0), sigma)
+    
+    sobelx = cv2.Sobel(img_gaussian_filter,cv2.CV_64F,1,0)
+    sobely = cv2.Sobel(img_gaussian_filter,cv2.CV_64F,0,1)
+    # Compute the magnitude of the gradients
+    Gmag = np.sqrt(sobelx*sobelx + sobely*sobely)
+    threshold = 50
+
+
+    white_lower_hsv = np.array([0, 0, 153])         # CHANGE ME
+    white_upper_hsv = np.array([228, 69, 255])   # CHANGE ME
+    yellow_lower_hsv = np.array([15, 30, 100])        # CHANGE ME
+    yellow_upper_hsv = np.array([35, 254, 255])  # CHANGE ME
+
+    mask_white = cv2.inRange(imghsv, white_lower_hsv, white_upper_hsv)
+    mask_yellow = cv2.inRange(imghsv, yellow_lower_hsv, yellow_upper_hsv)
+
+
+    mask_mag = (Gmag > threshold)
+
+    # np.savetxt("mask.txt", mask_white, fmt='%d', delimiter=',')
+    # exit()
+
+    final_mask = mask_ground * mask_mag * 255 
+    mask_white = mask_ground * mask_white
+    mask_yellow = mask_ground * mask_yellow
+    # Convert the NumPy array back to a PIL image
+
+    channels[0] =  final_mask
+    channels[1] =  mask_white
+    channels[2] =  mask_yellow
+    
+    filtered_image = np.stack(channels, axis=-1)
+    filtered_image = Image.fromarray(filtered_image)
+    return  filtered_image
 
 
 class SequentialImageDataset(Dataset):
@@ -176,6 +235,7 @@ def get_sequential_dataloader(
         raise ValueError("Fractions for train, validation, and test must sum to 1.0.")
 
     transform = transforms.Compose([
+        transforms.Lambda(apply_preprocessing),
         transforms.ToTensor(),  # Convert image to tensor
     ])
 
@@ -299,8 +359,8 @@ if __name__ == "__main__":
         model, train_loader, val_loader, criterion, optimizer, device, n_epochs)
 
     # Save the model for ftutre
-    torch.save(model.state_dict(), "models/lane_detection_rnn7.pth")
-    print("Model saved to 'lane_detection_rnn7.pth'")
+    torch.save(model.state_dict(), "models/lane_detection_rnn8_pp.pth")
+    print("Model saved to 'lane_detection_rnn8_pp.pth'")
 
     # Evaluate on test set
     test_loss = validate_model(model, test_loader, criterion, device)

@@ -28,6 +28,7 @@ import cv2
 from learning.RNN_distance.RNN import *
 from gym_duckietown.envs import DuckietownEnv
 from stuff import *
+from torchvision.transforms.functional import crop
 
 
 env = DuckietownEnv(
@@ -43,6 +44,7 @@ env = DuckietownEnv(
 
 env.reset()
 env.render()
+
 
 @env.unwrapped.window.event
 def on_key_press(symbol, modifiers):
@@ -112,9 +114,20 @@ def update(dt):
 
     im = np.array(Image.fromarray(obs))
 
+    # print(im.shape)
+
+    im_pp = apply_preprocessing(im)
+
+    # print(im_pp.shape)
+
+    # im_pp_bgr = cv2.cvtColor(im_pp, cv2.COLOR_RGB2BGR)
+    # cv2.imshow("Preprocessed Image", im_pp_bgr)
+    # cv2.waitKey(1)  # Small delay to allow rendering
+
+
     # Predict distance and update hidden state
     # previous action is given to the model
-    predicted_distance, hidden_state = predict_dist(model, im, action, hidden_state, device) 
+    predicted_distance, hidden_state = predict_dist(model, im_pp, action, hidden_state, device) 
     
     
     if save_image.save_image_enabled():
@@ -157,7 +170,7 @@ print(f"Using device: {device}")
 
 # # Load the trained model
 input_shape = (3, 480, 640)  # Input shape of images (channels, height, width)
-model = load_RNN_model("learning/RNN_distance/models/lane_detection_rnn5.pth", input_shape, device)
+model = load_RNN_model("learning/RNN_distance/models/lane_detection_rnn9_pp.pth", input_shape, device)
 
 pyglet.clock.schedule_interval(update, 1.0 / env.unwrapped.frame_rate)
 
