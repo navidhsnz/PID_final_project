@@ -38,7 +38,7 @@ pip install -e .
 ```
 After that there is some versions that need to be specified, so simply run this command : 
 ``` 
-pip install numpy==1.22 pyglet==1.5.15 Pillow torchsummary
+pip install numpy==1.22 pyglet==1.5.15 Pillow torchsummary tqdm
 ```
 Finally, we use conda to install the last of the dependencies, running
 ```
