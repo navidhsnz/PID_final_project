@@ -10,6 +10,7 @@ trained_models
 dist
 requirements.resolved
 learning/distance/road_images/
+learning/dataset/
 training_images
 learning/RNN_distance/training_images
 learning/RNN_distance/models
