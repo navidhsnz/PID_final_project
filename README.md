@@ -46,7 +46,7 @@ conda install -c conda-forge libstdcxx-ng
 ```
 It is expected too see some conflicting version of dependencies while running these. But after running these commands you should be set to train a model with our notebooks !
 ### 4. Importing dataset
-Before training a model, you will need a dataset ! We've made the one we created available [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1PKpnpfFRp1i37Pw?e=6nEsEP). Simply download it and chose between which datasets you want (1,2 or 3). The second and third are for the RNN aswell but still work without any trouble for the CNN. Place then the images, labels and actions in the `learning/dataset` folder, each having their subfolders `actions`, `images` and `labels`.
+Before training a model, you will need a dataset ! We've made the one we created available [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1PKpnpfFRp1i37Pw?e=6nEsEP). Simply download it and chose between which datasets you want (1,2 or 3). The second and third are for the RNN aswell but still work without any trouble for the CNN. Place then the images, labels and actions in the `learning/dataset` folder, each having their subfolders `actions`, `images` and `labels`. If they are not there, simply create them.
 
 ### 5. Run the training
 After installing the necessary dependencies, and importing the dataset, you can simply run the cells one by one to train a new model.
