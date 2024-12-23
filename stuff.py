@@ -24,7 +24,6 @@ from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import cv2
-from learning.RNN_distance.RNN import *
 
 
 
@@ -54,7 +53,7 @@ class PIDController:
         # PID output
         return proportional + integral + derivative
     
-    def get_action(self, dist, dt):
+    def set_action(self, dist, dt):
         error = -dist 
         pid_output = self.compute(error, dt)
         self.pid_action[1] = -pid_output # np.clip(pid_output, -1.0, 1.0)
@@ -115,60 +114,60 @@ class SaveImages:
         self.image_id +=1
 
 
-def apply_preprocessing(image):
-    """
-    Apply preprocessing transformations to the input image.
+# def apply_preprocessing(image):
+#     """
+#     Apply preprocessing transformations to the input image.
 
-    Parameters:
-    - image: PIL Image object.
-    """
-    image_array = np.array(image)
-    channels = [image_array[:, :, i] for i in range(image_array.shape[2])]
-    h, w, _ = image_array.shape
+#     Parameters:
+#     - image: PIL Image object.
+#     """
+#     image_array = np.array(image)
+#     channels = [image_array[:, :, i] for i in range(image_array.shape[2])]
+#     h, w, _ = image_array.shape
     
-    imghsv = cv2.cvtColor(image_array, cv2.COLOR_RGB2HSV)
-    img = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
+#     imghsv = cv2.cvtColor(image_array, cv2.COLOR_RGB2HSV)
+#     img = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
 
-    mask_ground = np.ones(img.shape, dtype=np.uint8)  # Start with a mask of ones (white)
+#     mask_ground = np.ones(img.shape, dtype=np.uint8)  # Start with a mask of ones (white)
 
 
-    one_third_height = h // 3
-    mask_ground[:one_third_height, :] = 0  # Mask the top 1/3 of the image
+#     one_third_height = h // 3
+#     mask_ground[:one_third_height, :] = 0  # Mask the top 1/3 of the image
     
-    #gaussian filter
-    sigma = 4.5
-    img_gaussian_filter = cv2.GaussianBlur(img,(0,0), sigma)
+#     #gaussian filter
+#     sigma = 4.5
+#     img_gaussian_filter = cv2.GaussianBlur(img,(0,0), sigma)
     
-    sobelx = cv2.Sobel(img_gaussian_filter,cv2.CV_64F,1,0)
-    sobely = cv2.Sobel(img_gaussian_filter,cv2.CV_64F,0,1)
-    # Compute the magnitude of the gradients
-    Gmag = np.sqrt(sobelx*sobelx + sobely*sobely)
-    threshold = 50
+#     sobelx = cv2.Sobel(img_gaussian_filter,cv2.CV_64F,1,0)
+#     sobely = cv2.Sobel(img_gaussian_filter,cv2.CV_64F,0,1)
+#     # Compute the magnitude of the gradients
+#     Gmag = np.sqrt(sobelx*sobelx + sobely*sobely)
+#     threshold = 50
 
 
-    white_lower_hsv = np.array([0, 0, 153])         # CHANGE ME
-    white_upper_hsv = np.array([228, 69, 255])   # CHANGE ME
-    yellow_lower_hsv = np.array([15, 30, 100])        # CHANGE ME
-    yellow_upper_hsv = np.array([35, 254, 255])  # CHANGE ME
+#     white_lower_hsv = np.array([0, 0, 153])         # CHANGE ME
+#     white_upper_hsv = np.array([228, 69, 255])   # CHANGE ME
+#     yellow_lower_hsv = np.array([15, 30, 100])        # CHANGE ME
+#     yellow_upper_hsv = np.array([35, 254, 255])  # CHANGE ME
 
-    mask_white = cv2.inRange(imghsv, white_lower_hsv, white_upper_hsv)
-    mask_yellow = cv2.inRange(imghsv, yellow_lower_hsv, yellow_upper_hsv)
+#     mask_white = cv2.inRange(imghsv, white_lower_hsv, white_upper_hsv)
+#     mask_yellow = cv2.inRange(imghsv, yellow_lower_hsv, yellow_upper_hsv)
 
 
-    mask_mag = (Gmag > threshold)
+#     mask_mag = (Gmag > threshold)
 
-    # np.savetxt("mask.txt", mask_white, fmt='%d', delimiter=',')
-    # exit()
+#     # np.savetxt("mask.txt", mask_white, fmt='%d', delimiter=',')
+#     # exit()
 
-    final_mask = mask_ground * mask_mag * 255 
-    mask_white = mask_ground * mask_white
-    mask_yellow = mask_ground * mask_yellow
-    # Convert the NumPy array back to a PIL image
+#     final_mask = mask_ground * mask_mag * 255 
+#     mask_white = mask_ground * mask_white
+#     mask_yellow = mask_ground * mask_yellow
+#     # Convert the NumPy array back to a PIL image
 
-    channels[0] =  final_mask
-    channels[1] =  mask_white
-    channels[2] =  mask_yellow
+#     channels[0] =  final_mask
+#     channels[1] =  mask_white
+#     channels[2] =  mask_yellow
     
-    filtered_image = np.stack(channels, axis=-1)
-    # filtered_image = Image.fromarray(filtered_image)
-    return  filtered_image
+#     filtered_image = np.stack(channels, axis=-1)
+#     # filtered_image = Image.fromarray(filtered_image)
+#     return  filtered_image

@@ -9,7 +9,12 @@ bin
 trained_models
 dist
 requirements.resolved
-learning/distance/road_images/
-training_images
-learning/RNN_distance/training_images
+learning/CNN/CNN1
+learning/CNN/CNN2
+learning/CNN/models
+learning/RNN/RNN1
+learning/RNN/RNN2
+learning/RNN/RNN3
+learning/RNN/RNN4
+learning/RNN/models
 learning/RNN_distance/models
