@@ -75,3 +75,14 @@ python run_simulation.py --model_type MODEL_TYPE
 ```
 MODEL_TYPE here is `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3` or `RNN4`
 
+In the simulation, you have access to multiple controls from the keyboard. 
+- `SPACE` for engaging/disengaging the PID
+- `O` for increasing kp
+- `P` for decreasing kp
+- `K` for increasing kd
+- `L` for decreasind kd
+- `N` for increasing speed
+- `B` for decreasing speed
+- `S` for image capturing
+- `ESCAPE` for closing
+- `\` or `/` for resetting
