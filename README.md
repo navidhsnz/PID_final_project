@@ -54,7 +54,7 @@ It is expected too see some conflicting version of dependencies while running th
 Before training a model, you will need a dataset ! We've made the one we created available [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1PKpnpfFRp1i37Pw?e=6nEsEP). Simply download it and chose between which datasets you want (1,2 or 3). The second and third are for the RNN aswell but still work without any trouble for the CNN. Place then the images, labels and actions in the `learning/dataset` folder, each having their subfolders `actions`, `images` and `labels`. If they are not there, simply create them.
 
 ### 5. Import weights
-If you want to import weigths, make sure to download this [folder](https://1drv.ms/u/s!AmxJyID0MPIzlZ1Wola6EJrP-KDuyA?e=0DKmbD) and place the `.pth` in either `learning/CNN` for the CNN models or `learning/RNN` for the RNN models.
+If you want to import weigths, make sure to download this [folder](https://1drv.ms/u/s!AmxJyID0MPIzlZ1Wola6EJrP-KDuyA?e=0DKmbD) and place the `.pth` in either `learning/CNN/models` for the CNN models or `learning/RNN/models` for the RNN models.
 
 ### 6. Run the training
 After installing the necessary dependencies, and importing the dataset, you can simply run the training by going into the `learning/CNN` or `learning/RNN` folder and running
@@ -66,4 +66,12 @@ MODEL_NAME here is either `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3`, `RNN4` which a
 
 ## Running a model in simulation
 
-For testing a model in simulation, make sure you have trained one or imported the weights following the previous
+For testing a model in simulation, make sure you have trained one or imported the weights following the previous instructions.
+
+In either way you will need all the dependencies.
+You can run a model in simulation with the command 
+```
+python run_simulation.py --model_type MODEL_TYPE
+```
+MODEL_TYPE here is `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3` or `RNN4`
+
