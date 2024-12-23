@@ -7,7 +7,7 @@ Here are our datasets we created and some weights for each of our models :
 
 Dataset : [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1VALdvhZNA4hsX6A?e=6yPjfp)
 Weights : [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1Wola6EJrP-KDuyA?e=0DKmbD)
-## How to use it
+## How to train a model
 
 ### 1 Basic requirements
 For this project, you will need these requirements
@@ -63,3 +63,7 @@ After installing the necessary dependencies, and importing the dataset, you can 
 python MODEL_NAME.py
 ```
 MODEL_NAME here is either `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3`, `RNN4` which are all of our different model we tested.
+
+## Running a model in simulation
+
+For testing a model in simulation, make sure you have trained one or imported the weights following the previous

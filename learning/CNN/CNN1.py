@@ -153,7 +153,7 @@ def get_transform():
 # # image = Image.open('example.png') 
 # ii=0
 # while True:
-#     image = cv2.imread(f"training_images/trail2/images/image_{ii}.jpg")
+#     image = cv2.imread(f"../dataset/images/image_{ii}.jpg")
 
 #     # print(image.shape)
 
@@ -247,8 +247,8 @@ def loader_creator(image_dir, label_dir, transform=None, batch_size=32, train_sp
 
 # # the follwoin code check the images and labels are properly laoded and can be displayed
 # if __name__ == "__main__":
-#     image_folder = "training_images/trail2/images"
-#     lablel_folder = "training_images/trail2/labels"
+#     image_folder = "../dataset/images"
+#     lablel_folder = "../dataset/labels"
 #     batch_size = 10
 
 #     train_fraction = 0.85

@@ -249,8 +249,8 @@ def get_sequential_dataloader(
 
 # testing the dataloaders and image preprocesing outputs
 # if __name__ == "__main__":
-#     image_folder = "training_images/trail2/images"
-#     label_folder = "training_images/trail2/labels"
+#     image_folder = "../dataset/images"
+#     label_folder = "../dataset/labels"
 #     batch_size = 10  
 #     seq_length = 20 
 

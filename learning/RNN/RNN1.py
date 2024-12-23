@@ -208,8 +208,8 @@ def get_sequential_dataloader(
 
 # the follwoin code check the images and labels are properly laoded and can be displayed
 # if __name__ == "__main__":
-#     image_folder = "training_images/trail2/images"
-#     lablel_folder = "training_images/trail2/labels"
+#     image_folder = "../dataset/images"
+#     lablel_folder = "../dataset/labels"
 #     batch_size = 10  # sequences per batch
 #     seq_length = 20 # images per sequence
 
