@@ -491,9 +491,9 @@ if __name__ == "__main__2":
 
 # training
 if __name__ == "__main__":
-    image_folder = "training_images/trail2/images"
-    label_folder = "training_images/trail2/labels"
-    action_folder = "training_images/trail2/actions"
+    image_folder = "../dataset/images"
+    label_folder = "../dataset/labels"
+    action_folder = "../dataset/actions"
 
     batch_size = 10 
     seq_length = 20 

@@ -360,8 +360,8 @@ if __name__ == "__main__":
     transform = get_transform()
 
     train_loader, val_loader, test_loader = loader_creator(
-        image_dir="training_images/trail2/images",
-        label_dir="training_images/trail2/labels",
+        image_dir="../dataset/images",
+        label_dir="../dataset/labels",
         transform=transform,
         batch_size=16,
         train_split=0.8,
