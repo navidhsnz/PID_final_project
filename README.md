@@ -82,13 +82,13 @@ These files contain the code needed to train the models. During training, they w
 
 ### 6. Import weights
 Training the models takes a while. If you want to import the weigths of the models we have already trained, follow the following steps:
-Download this [folder](https://1drv.ms/u/s!AmxJyID0MPIzlZ1Wola6EJrP-KDuyA) and extract it. This folder contains two subfolders, namely `CNN` and `RNN`. In each one, there is the `models` folder containign the weights of all models. Copy this folder and place it in either `learning/CNN/` for the CNN models or `learning/RNN/` for the RNN models.
+Download this [folder](https://1drv.ms/u/s!AmxJyID0MPIzlZ1Wola6EJrP-KDuyA) and extract it. This folder contains two subfolders, namely `CNN` and `RNN`. In each one, there are the weights of the trained models. Copy these weights and place them in either `learning/CNN/models` for the CNN models or `learning/RNN/models` for the RNN models.
 
 
 ## Running a model in simulation
 
 For testing a model in simulation, make sure you have trained one or imported the weights following the previous instructions.
-The simulation file is called `run_simulation.py`.
+The weights are expected to be either in `learning/CNN/models` or in `learning/RNN/models`. The simulation file is called `run_simulation.py`.
 Also, you will need all the dependencies.
 You can run a model in simulation with the command 
 ```
