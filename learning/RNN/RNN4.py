@@ -276,9 +276,9 @@ def get_sequential_dataloader(
 
 # # test the data
 # if __name__ == "__main__":
-#     image_folder = "../dataset/images"
-#     label_folder = "../dataset/labels"
-#     action_folder = "training_images/trail2/actions"
+#     image_folder =  "../datasets/trail2/images"
+#     label_folder =  "../datasets/trail2/labels"
+#     action_folder = "../datasets/trail2/actions"
 
 #     batch_size = 10  
 #     seq_length = 20 
@@ -441,9 +441,9 @@ def train_model_with_validation_and_checkpoints(model, train_loader, val_loader,
 
 # training
 if __name__ == "__main__2":
-    image_folder = "../dataset/images"
-    label_folder = "../dataset/labels"
-    action_folder = "training_images/trail2/actions"
+    image_folder =  "../datasets/trail2/images"
+    label_folder =  "../datasets/trail2/labels"
+    action_folder = "../datasets/trail2/actions"
 
     batch_size = 10  
     seq_length = 20 
@@ -491,9 +491,9 @@ if __name__ == "__main__2":
 
 # training
 if __name__ == "__main__":
-    image_folder = "../dataset/images"
-    label_folder = "../dataset/labels"
-    action_folder = "../dataset/actions"
+    image_folder = "../datasets/trail2/images"
+    label_folder = "../datasets/trail2/labels"
+    action_folder = "../datasets/trail2/actions"
 
     batch_size = 10 
     seq_length = 20 

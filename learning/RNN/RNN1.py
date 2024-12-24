@@ -208,8 +208,8 @@ def get_sequential_dataloader(
 
 # the follwoin code check the images and labels are properly laoded and can be displayed
 # if __name__ == "__main__":
-#     image_folder = "../dataset/images"
-#     lablel_folder = "../dataset/labels"
+#     image_folder = "../datasets/trail2/images"
+#     lablel_folder = "../datasets/trail2/labels"
 #     batch_size = 10  # sequences per batch
 #     seq_length = 20 # images per sequence
 
@@ -358,8 +358,8 @@ def train_model_with_checkpoints(model, train_loader, val_loader, criterion, opt
 #   training
 if __name__ == "__main__":
     # dataset paths
-    image_folder = "../dataset/images"
-    lablel_folder = "../dataset/labels"
+    image_folder = "../datasets/trail2/images"
+    lablel_folder = "../datasets/trail2/labels"
 
     batch_size = 10 # sequences per batch
     seq_length = 20  # images per sequence
