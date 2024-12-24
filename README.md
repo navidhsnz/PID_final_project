@@ -1,4 +1,5 @@
-This is our final project for IFT6757 "Duckietown" class at UdeM.
+This is our final project for IFT6757 Fall 2024 "Duckietown" class at UdeM.
+Group Members: Navid Hassan Zadeh and Simon-Olivier Duguay
 Please refer to the project report for a complete explanation of the project. This repository only contains a part of the project.
 
 The project report is available [here](Final_Project_Report_Navid_and_Simon.pdf)
