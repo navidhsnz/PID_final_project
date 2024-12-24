@@ -26,7 +26,7 @@ Dataset : [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1eQO8Wp9isMPlmOg?e=r5OoxG)
 Weights : [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1Wola6EJrP-KDuyA)
 ## How to train a model
 
-### 1 Basic requirements
+### 1 Basic requirements for the simulator
 For this project, you will need these requirements
 - Linux File System 
 - Docker 
@@ -65,7 +65,7 @@ Finally, we use conda to install the last of the dependencies, running
 ```
 conda install -c conda-forge libstdcxx-ng
 ```
-It is expected too see some conflicting version of dependencies while running these. But after running these commands you should be set to train a model with our notebooks !
+It is expected too see some conflicting version of dependencies while running these. But after running these commands you should be set to run the simulator !
 
 ### 4. Importing dataset
 Before training a model, you will need a dataset ! We've made the one we created available [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1eQO8Wp9isMPlmOg?e=r5OoxG). Simply download it and extract it. You should place the folder named `datasets` in `learning/`. We have three datasets (`trail1`, `trail2`, and `trail3`). In our experiments we used `trail2`. You can change this and between which datasets you want (1,2 or 3). The second and third ones are for the RNN since they have `actions` folder, but they still work without any trouble for the CNN training. After adding the images, the content of the `learning` folder should include three folders, namely `CNN`, `RNN`, and `datasets`.
