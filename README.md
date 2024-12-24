@@ -56,7 +56,7 @@ conda activate gym-duckietown
 ```
 
 ### 3. Installations and resolving extra dependencies
-There are some extra dependencies needed for running everything. You will first need to install the simulator with:
+There are some extra dependencies needed for running everything. You will first need to install gym-dcukietown with:
 ```
 pip install -e .
 ```
