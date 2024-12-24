@@ -1,4 +1,4 @@
-# PIDPlus Training
+# PIDPlus Training and Simulation
 Training of our model for IFT6757 "Duckietown" class project PIDPlus. While this page will help you run the training of our models, this will also allow you to run the gym-duckietown simulator and our script to generate the dataset we used in training.
 ![](media/CNN1_1.png)
 ![](media/RNN3_2.png)
