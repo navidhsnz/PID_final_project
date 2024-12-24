@@ -26,7 +26,7 @@ Here is a video of the simulation for model RNN4: [here](https://www.youtube.com
 
 
 ## Datasets and weights
-Here are our datasets we created and some weights for each of our models : 
+Here are the datasets we created for this experiment as well as the trained models' weights: 
 
 Dataset : [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1eQO8Wp9isMPlmOg?e=r5OoxG)
 
