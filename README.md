@@ -1,5 +1,8 @@
+This is our final project for IFT6757 "Duckietown" class at UdeM.
+Please refer to the project report for a complete explanation of the project. This repository only contains a part of the project.
+
 # PIDPlus Training and Simulation
-Training of our model for IFT6757 "Duckietown" class project PIDPlus. While this page will help you run the training of our models, this will also allow you to run the gym-duckietown simulator and our script to generate the dataset we used in training.
+This repository contains everything you need to train the models and run the simulation. All the code that concerns model implementainos and their training are in `learning`. The simulation is `run_simulation.py` which runs the simulation and also is used for creating datsets. For more detailed explanations on reproducing the results of our experiment including training the models and running the simulator, please continue reading.
 ![](media/CNN1_1.png)
 ![](media/RNN3_2.png)
 ## Videos
