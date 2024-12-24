@@ -4,12 +4,19 @@ Training of our model for IFT6757 "Duckietown" class project PIDPlus. While this
 ![](media/RNN3_2.png)
 ## Videos
 Here is our real world results: [here](https://www.youtube.com/watch?v=c7_-a6bwr1I&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6)
+
 Here is a video of the simulation for model CNN1: [here](https://www.youtube.com/watch?v=rJtUea_6V4s&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6&index=5)
+
 Here is a video of the simulation for model CNN2: [here](https://www.youtube.com/watch?v=UVOseRL8ieA&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6&index=5&pp=iAQB)
+
 Here is a video of the simulation for model RNN1: [here](https://www.youtube.com/watch?v=lfG0cgGci4E&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6&index=6&pp=iAQB)
+
 Here is a video of the simulation for model RNN2: [here](https://www.youtube.com/watch?v=e02h_0ez7BQ&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6&index=7&pp=iAQB)
+
 Here is a video of the simulation for model RNN3: [here](https://www.youtube.com/watch?v=tXs06yWc4Pc&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6&index=2&pp=iAQB)
+
 Here is a video of the simulation for model RNN4: [here](https://www.youtube.com/watch?v=PqAEIR1alOY&list=PL9zoqgzvQ0ABEr8rfXTN7xGBawXYTd_H6&index=3&pp=iAQB)
+
 
 ## Datasets and weights
 Here are our datasets we created and some weights for each of our models : 
