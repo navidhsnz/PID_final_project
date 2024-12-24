@@ -103,13 +103,12 @@ Once the simulation is loaded up, you can control the robot with arrow keys. If 
 
 In the simulation, you have access to multiple controls from the keyboard. Here is a complete list: 
 - `SPACE` for engaging/disengaging the PID
-- `O` for increasing kp
-- `P` for decreasing kp
-- `K` for increasing kd
-- `L` for decreasind kd
-- `N` for increasing speed
-- `B` for decreasing speed
-- `S` for image capturing (This is for creating datssets. It records images and their labels every few miliseconds and creats a datset.)
+- `o` for increasing kp
+- `p` for decreasing kp
+- `k` for increasing kd
+- `l` for decreasind kd
+- `n` for increasing speed
+- `b` for decreasing speed
+- `s` for image capturing (This is for creating datssets. It records images and their labels every few miliseconds and creats a datset.)
 - `ESCAPE` for closing
-- `\` or `/` for resetting
 - `SHIFT`  to increase the speed with arrow keys (1.5x)
