@@ -1,6 +1,6 @@
 This is our final project for IFT6757 "Duckietown" class at UdeM.
 Please refer to the project report for a complete explanation of the project. This repository only contains a part of the project.
-
+The project report is available here ![](Final_Project_Report_Navid and Simon-Olivier.pdf)
 # PIDPlus Training and Simulation
 This repository contains everything you need to train the models and run the simulation. All the code that concerns model implementainos and their training are in `learning`. The simulation is `run_simulation.py` which runs the simulation and also is used for creating datsets. For more detailed explanations on reproducing the results of our experiment including training the models and running the simulator, please continue reading.
 ![](media/CNN1_1.png)
