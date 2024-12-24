@@ -103,7 +103,7 @@ python run_simulation.py --model_type MODEL_TYPE
 ```
 MODEL_TYPE here is `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3` or `RNN4`
 
-Once the simulation is loaded up, you can control the robot with arrow keys. If you want to enable the PID contorl so that the robot uses the predictions to follow the lane, press `SPACE`. Pressing it again will disengage the PID.
+Once the simulation is loaded up, you can control the robot with arrow keys. If you want to enable the PID contorl so that the robot uses the predictions to follow the lane, first drive the robot to be placed in the outer lane and then press `SPACE` to engage the PID. Pressing it again will disengage the PID.
 
 In the simulation, you have access to multiple controls from the keyboard. Here is a complete list: 
 - `SPACE` for engaging/disengaging the PID
