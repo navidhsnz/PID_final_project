@@ -83,7 +83,7 @@ After installing the necessary dependencies, and importing the dataset, you can 
 ```
 python MODEL_NAME.py
 ```
-MODEL_NAME here is either `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3`, `RNN4` which are all of our different model we tested.
+MODEL_NAME here is either `CNN1`, `CNN2`, `RNN1`, `RNN2`, `RNN3`, `RNN4` which are all of the different models we implemented and trained.
 
 These files contain the code needed to train the models. During training, they will produce some snapshots of the weights of the model as backup. After training is done, they produce a final weight file. Create a folder named `models` inside `learning/CNN/` and another one with the same name inside `learning/RNN`. Put the final weights of the model inside of this folder. ie. the respective weights of the models for CNN and RNN should be placed in `learning/CNN/models` and `learning/RNN/models`. After this, you can run the `Evaluate_CNN{1,2}.ipynb` or `Evaluate_RNN{1,2,3,4}.ipynb` to evaluate the models predictions on some sample images from the dataset. Note that for these notebooks, you will need both the datsets as explained in step 4 above, as well as the weights. After running the training code, two text files will also be produced. These include the training and validation loss of the models during thraining. The notebook `loss_graphs.ipynb` draws the corresponding loss graphs using these text files.
 
