@@ -70,7 +70,7 @@ It is expected too see some conflicting version of dependencies while running th
 ### 4. Importing dataset
 Before training a model, you will need a dataset ! We've made the one we created available [here](https://1drv.ms/u/s!AmxJyID0MPIzlZ1eQO8Wp9isMPlmOg?e=r5OoxG). Simply download it and extract it. You should place the folder named `datasets` in `learning/`. We have three datasets (`trail1`, `trail2`, and `trail3`). In our experiments we used `trail2`. You can change this and between which datasets you want (1,2 or 3). The second and third ones are for the RNN since they have `actions` folder, but they still work without any trouble for the CNN training. After adding the images, the content of the `learning` folder should include three folders, namely `CNN`, `RNN`, and `datasets`.
 
-### 5. How to trail the models?
+### 5. How to train the models?
 After installing the necessary dependencies, and importing the dataset, you can simply run the training by going into the `learning/CNN` or `learning/RNN` folder and running
 
 ```
