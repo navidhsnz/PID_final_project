@@ -55,8 +55,8 @@ You can then simply activate your newly created environment using
 conda activate gym-duckietown
 ```
 
-### 3. Install extra dependencies
-There are some extra dependencies needed for running everything. You will first need to do 
+### 3. Installations and resolving extra dependencies
+There are some extra dependencies needed for running everything. You will first need to install the simulator with:
 ```
 pip install -e .
 ```
